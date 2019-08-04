@@ -67,8 +67,8 @@ else:
 dt = datetime.datetime.now()
 dt_email = dt.strftime('%A %d %B of %Y')
 
-strFrom = "verloc.pyt@gmail.com"
-strTo = "verloc.perhan@gmail.com"
+strFrom = ""            #add input()?
+strTo = ""              #add input()?
 
 msgRoot = MIMEMultipart('related')
 msgRoot['Subject'] = "Good morning! News of {}".format((dt_email))
@@ -98,7 +98,7 @@ if status_xkcd == 1:                     #Status 1: a new "xkcd" image has been 
 smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)       #smtp server object
 smtp_obj.ehlo()                                      #initiate connection with server
 smtp_obj.starttls()                                  #for encryption. This methods puts the SMTP in TLS encryption
-smtp_obj.login("verloc.pyt@gmail.com", "ret61nws")   #login. Be careful with password. here it's just a dummy email address
+smtp_obj.login("EMAIL", "PASSWORD")                  #login. Be careful with password. here we can add input()
 smtp_obj.sendmail(strFrom, strTo, msgRoot.as_string())
 smtp_obj.quit()
 
