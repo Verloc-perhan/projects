@@ -8,12 +8,10 @@ from email.mime.text import MIMEText
 import datetime
 
 
-os.makedirs("D:\\Dummy", exist_ok=True)         #create if necessary the folder Dummy in :\\D
+os.makedirs("D:\\Dummy", exist_ok=True)         #create the folder Dummy in :\\D, if necessary
 os.chdir("D:\\Dummy")
 
 
-
-#SAVAGECHICKEN: DONE.
 savage_data = requests.get("https://www.savagechickens.com/")
 soup = bs4.BeautifulSoup(savage_data.text, features="lxml")
 images = soup.find("div", class_="entry_content").p.img
@@ -23,7 +21,7 @@ url_image = images.get('src')
 last_part_url_image = url_image.split('/')[5]
 picture = requests.get(url_image)
 
-status_chicken = 0                      #this block checks the latest image of the comics blog. If this picture already exists in the folder: status is 0, if not: status is 1
+status_chicken = 0                      #this block checks the latest image of the comics blog. If this picture already exists in the folder D:\\Dummy: status is 0, if not: status is 1
 try:
     f = open("D:\\Dummy\\{}".format(last_part_url_image), "rb")
 except Exception:
@@ -37,8 +35,6 @@ else:
     message_chicken = "There is no chicken comic picture today"
 
 
-
-#2: XKCD: DONE
 xkcd = requests.get("https://xkcd.com/")
 soup_xkcd = bs4.BeautifulSoup(xkcd.text, features="lxml")
 images_xkcd = soup_xkcd.find("div", id="comic").img
