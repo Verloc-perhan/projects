@@ -1,6 +1,6 @@
 #final project here: having an email sent every morning with the current weather (chapter 14) + forecast weather (chapter 14) and the latest comics strips from xcd??
 
-import os, bs4, requests, webbrowser
+import os, bs4, requests
 import smtplib
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -22,7 +22,7 @@ url_image = images.get('src')
 last_part_url_image = url_image.split('/')[5]
 picture = requests.get(url_image)
 
-#checks the latest image of the comics blog and update a status (1= update, 0= no update)
+#checks the latest image of the comics blog and updates status (1= update, 0= no update)
 status_chicken = 0
 try:
     f = open("D:\\Dummy\\{}".format(last_part_url_image), "rb")
@@ -44,7 +44,7 @@ url_image_xkcd = images_xkcd.get("src")
 last_part_url_xkcd = url_image_xkcd.split("/")[4]
 picture_xkcd = requests.get("https:{}".format(url_image_xkcd))
 
-#checks the latest image of the comics blog and update a status (1= update, 0= no update)
+#checks the latest image of the comics blog and updates status (1= update, 0= no update)
 status_xkcd = 0
 try:
     f = open("D:\\Dummy\\{}".format(last_part_url_xkcd), "rb")
@@ -63,8 +63,8 @@ else:
 dt = datetime.datetime.now()
 dt_email = dt.strftime('%A %d %B of %Y')
 
-strFrom = ""            #add input()?
-strTo = ""              #add input()?
+strFrom = input("Enter the sender email's address")
+strTo = input("Enter the recipient email's address")
 
 msgRoot = MIMEMultipart('related')
 msgRoot['Subject'] = "Good morning! News of {}".format((dt_email))
@@ -72,10 +72,8 @@ msgRoot['From'] = strFrom
 msgRoot['To'] = strTo
 msgRoot.preamble = "This is the morning email"
 
-
 msgText = MIMEText('{}<br><img src="cid:0"><br>{}<br><img src="cid:1"><br>Enjoy the day!'.format(message_chicken, message_xkcd), 'html')  #embed the image + text
 msgRoot.attach(msgText)
-
 
 if status_chicken == 1:
     with open(last_part_url_image, 'rb') as im:
@@ -90,7 +88,7 @@ if status_xkcd == 1:
         msgRoot.attach(msgImage_xkcd)
 
 
-
+#smtp object settup
 smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)
 smtp_obj.ehlo()
 smtp_obj.starttls()
