@@ -7,6 +7,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import datetime
 
+EMAIL = input("Enter your email address")
+PASSWORD = input("Enter the password")
+
 
 os.makedirs("D:\\Dummy", exist_ok=True)         #create the folder Dummy in :\\D, if necessary
 os.chdir("D:\\Dummy")
@@ -91,10 +94,10 @@ if status_xkcd == 1:                     #Status 1: a new "xkcd" image has been 
 
 
 
-smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)       #smtp server object
-smtp_obj.ehlo()                                      #initiate connection with server
-smtp_obj.starttls()                                  #for encryption. This methods puts the SMTP in TLS encryption
-smtp_obj.login("EMAIL", "PASSWORD")                  #login. Be careful with password. here we can add input()
+smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)
+smtp_obj.ehlo()
+smtp_obj.starttls()
+smtp_obj.login("EMAIL", "PASSWORD")
 smtp_obj.sendmail(strFrom, strTo, msgRoot.as_string())
 smtp_obj.quit()
 
