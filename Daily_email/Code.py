@@ -1,4 +1,4 @@
-#final project here: having an email sent every morning with the current weather (chapter 14) + forecast weather (chapter 14) and the latest comics strips from xcd??
+#Simple automated email, with some comics picture, current weather + weather forecast
 
 import os, bs4, requests
 import smtplib
