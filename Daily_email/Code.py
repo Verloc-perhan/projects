@@ -19,12 +19,11 @@ savage_data = requests.get("https://www.savagechickens.com/")
 soup = bs4.BeautifulSoup(savage_data.text, features="lxml")
 images = soup.find("div", class_="entry_content").p.img
 url_image = images.get('src')
-
-
 last_part_url_image = url_image.split('/')[5]
 picture = requests.get(url_image)
 
-status_chicken = 0                      #this block checks the latest image of the comics blog. If this picture already exists in the folder D:\\Dummy: status is 0, if not: status is 1
+#checks the latest image of the comics blog and update a status (1= update, 0= no update)
+status_chicken = 0
 try:
     f = open("D:\\Dummy\\{}".format(last_part_url_image), "rb")
 except Exception:
@@ -37,17 +36,16 @@ else:
     status_chicken = 0
     message_chicken = "There is no chicken comic picture today"
 
-
+#Getting the image from xkcd.com
 xkcd = requests.get("https://xkcd.com/")
 soup_xkcd = bs4.BeautifulSoup(xkcd.text, features="lxml")
 images_xkcd = soup_xkcd.find("div", id="comic").img
 url_image_xkcd = images_xkcd.get("src")
-
-
 last_part_url_xkcd = url_image_xkcd.split("/")[4]
 picture_xkcd = requests.get("https:{}".format(url_image_xkcd))
 
-status_xkcd = 0                      #this block checks the latest image of the comics blog. If this picture already exists in the folder: status is 0, if not: status is 1
+#checks the latest image of the comics blog and update a status (1= update, 0= no update)
+status_xkcd = 0
 try:
     f = open("D:\\Dummy\\{}".format(last_part_url_xkcd), "rb")
 except Exception:
@@ -62,7 +60,6 @@ else:
 
 
 
-#not ready yet: EMAIL + IMG
 dt = datetime.datetime.now()
 dt_email = dt.strftime('%A %d %B of %Y')
 
@@ -80,13 +77,13 @@ msgText = MIMEText('{}<br><img src="cid:0"><br>{}<br><img src="cid:1"><br>Enjoy 
 msgRoot.attach(msgText)
 
 
-if status_chicken == 1:                   #Status 1: a new "chicken" image has been added to the folder
+if status_chicken == 1:
     with open(last_part_url_image, 'rb') as im:
         msgImage = MIMEImage(im.read())
         msgImage.add_header('Content-ID', '<0>')
         msgRoot.attach(msgImage)
 
-if status_xkcd == 1:                     #Status 1: a new "xkcd" image has been added to the folder
+if status_xkcd == 1:
     with open(last_part_url_xkcd, 'rb') as im_xkcd:
         msgImage_xkcd = MIMEImage(im_xkcd.read())
         msgImage_xkcd.add_header('Content-ID', '<1>')
