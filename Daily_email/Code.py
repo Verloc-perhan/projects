@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 import datetime
 
 EMAIL = input("Enter your email address")
-PASSWORD = input("Enter the password")
+PASSWORD = input("Enter the password here")
 
 
 os.makedirs("D:\\Dummy", exist_ok=True)         #create the folder Dummy in :\\D, if necessary
