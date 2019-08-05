@@ -6,15 +6,17 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import datetime
+import json
 
 EMAIL = input("Enter your email address")
 PASSWORD = input("Enter the password here")
-
+strFrom = input("Enter the sender email's address")
+strTo = input("Enter the recipient email's address")
 
 os.makedirs("D:\\Dummy", exist_ok=True)         #create the folder Dummy in :\\D, if necessary
 os.chdir("D:\\Dummy")
 
-
+#COMICS PART
 savage_data = requests.get("https://www.savagechickens.com/")
 soup = bs4.BeautifulSoup(savage_data.text, features="lxml")
 images = soup.find("div", class_="entry_content").p.img
@@ -35,6 +37,7 @@ except Exception:
 else:
     status_chicken = 0
     message_chicken = "There is no chicken comic picture today"
+    f.close()
 
 #Getting the image from xkcd.com
 xkcd = requests.get("https://xkcd.com/")
@@ -57,14 +60,43 @@ except Exception:
 else:
     status_xkcd = 0
     message_xkcd = "There is no xkcd comic picture today"
+    f.close()
 
+
+#WEATHER FORECAST for BERLIN
+
+API_key = input("Enter your API_key from https://home.openweathermap.org")           #register here to get your API_key: https://home.openweathermap.org/
+api_current_info = requests.get("http://api.openweathermap.org/data/2.5/weather?id=2950157&APPID={}".format(API_key)).text
+api_forecast_info = requests.get("http://api.openweathermap.org/data/2.5/forecast?id=2950157&APPID={}".format(API_key)).text
+
+#Current weather
+dico_cu_weather = json.loads(api_current_info)
+temperature_cu = round(dico_cu_weather["main"]["temp"]-273.15,2)
+humidity_cu = dico_cu_weather["main"]["humidity"]
+weather_description_cu = dico_cu_weather["weather"][0]["description"]
+cu_weather_message = "Current weather is: {}°C, {}% of humidity and {}.".format(temperature_cu, humidity_cu, weather_description_cu)
+
+
+#Weather forecast
+pyth_fc = json.loads(api_forecast_info)
+dico_weather = pyth_fc["list"]
+
+#forecast: 3-4 hours and 6-7 hours
+
+
+Berlin_weather_fc = []
+for i in range(x,y):
+    time_forecast = dico_weather[i]["dt_txt"]
+    temperature = round(dico_weather[i]["main"]["temp"]-273.15, 2)
+    humidity = dico_weather[i]["main"]["humidity"]
+    weather_description = dico_weather[i]["weather"][0]["description"]
+    Berlin_weather_fc.append("Weather on {} is: {}°C, {}% of humidity and {}.".format(time_forecast, temperature, humidity, weather_description))
 
 
 dt = datetime.datetime.now()
 dt_email = dt.strftime('%A %d %B of %Y')
 
-strFrom = input("Enter the sender email's address")
-strTo = input("Enter the recipient email's address")
+
 
 msgRoot = MIMEMultipart('related')
 msgRoot['Subject'] = "Good morning! News of {}".format((dt_email))
@@ -72,7 +104,7 @@ msgRoot['From'] = strFrom
 msgRoot['To'] = strTo
 msgRoot.preamble = "This is the morning email"
 
-msgText = MIMEText('{}<br><img src="cid:0"><br>{}<br><img src="cid:1"><br>Enjoy the day!'.format(message_chicken, message_xkcd), 'html')  #embed the image + text
+msgText = MIMEText('{}<br><img src="cid:0"><br>{}<br><img src="cid:1"><br>{}<br>{}<br>{}Enjoy the day!'.format(message_chicken, message_xkcd, cu_weather_message, Berlin_weather_fc[0], Berlin_weather_fc[1]), 'html')  #embed the image + text
 msgRoot.attach(msgText)
 
 if status_chicken == 1:
@@ -92,9 +124,10 @@ if status_xkcd == 1:
 smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)
 smtp_obj.ehlo()
 smtp_obj.starttls()
-smtp_obj.login("EMAIL", "PASSWORD")
+smtp_obj.login(EMAIL, PASSWORD)
 smtp_obj.sendmail(strFrom, strTo, msgRoot.as_string())
 smtp_obj.quit()
+
 
 
 
@@ -103,6 +136,7 @@ smtp_obj.quit()
 #3: ADD http://www.lunarbaboon.com/: OPTIONAL
 
 #4: take the current weather: API
+
 https://openweathermap.org/api
 #5: take the forecast weather for tomorrow: API
 https://openweathermap.org/api
