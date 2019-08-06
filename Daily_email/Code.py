@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 import datetime
 import json
 
+
 EMAIL = input("Enter your email address")
 PASSWORD = input("Enter the password here")
 strFrom = input("Enter the sender email's address")
